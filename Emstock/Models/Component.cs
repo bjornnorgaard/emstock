@@ -1,4 +1,6 @@
-﻿namespace Models
+﻿using Models.Enums;
+
+namespace Models
 {
     public class Component
     {
@@ -9,5 +11,8 @@
         public string AdminComment { get; set; }
         public string UserComment { get; set; }
         public long? CurrentLoanInformationId { get; set; }
+
+        public int ComponentTypeId { get; set; }
+        public ComponentType ComponentType { get; set; }
     }
 }

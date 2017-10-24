@@ -1,4 +1,7 @@
-﻿namespace Models
+﻿using System.Collections.Generic;
+using Models.Enums;
+
+namespace Models
 {
     public class ComponentType
     {
@@ -12,5 +15,8 @@
         public string Manufacturer { get; set; }
         public string WikiLink { get; set; }
         public string AdminComment { get; set; }
+
+        public List<Category> Categories { get; set; }
+        public List<Component> Components { get; set; }
     }
 }
