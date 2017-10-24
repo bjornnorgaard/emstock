@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DataAccess;
 using Models;
+using Type = Models.Type;
 
 namespace Mvc.Controllers
 {
