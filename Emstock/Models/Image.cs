@@ -2,7 +2,7 @@
 
 namespace Models
 {
-    public class EsImage
+    public class Image
     {
         public long Id { get; set; }
         [MaxLength(128)]

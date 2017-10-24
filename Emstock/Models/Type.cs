@@ -3,7 +3,7 @@ using Models.Enums;
 
 namespace Models
 {
-    public class ComponentType
+    public class Type
     {
         public long Id { get; set; }
         public string Name { get; set; }
@@ -16,7 +16,7 @@ namespace Models
         public string WikiLink { get; set; }
         public string AdminComment { get; set; }
 
-        public List<Category> Categories { get; set; }
+        public List<CategoryType> CategoryTypes { get; set; }
         public List<Component> Components { get; set; }
     }
 }

@@ -13,6 +13,6 @@ namespace Models
         public long? CurrentLoanInformationId { get; set; }
 
         public int ComponentTypeId { get; set; }
-        public ComponentType ComponentType { get; set; }
+        public Type Type { get; set; }
     }
 }
