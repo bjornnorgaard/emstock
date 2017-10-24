@@ -51,7 +51,7 @@ namespace Mvc.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Number,SerialNo,Status,AdminComment,UserComment,CurrentLoanInformationId,ComponentTypeId")] Component component)
+        public async Task<IActionResult> Create([Bind("Id,Number,SerialNo,Status,AdminComment,UserComment,CurrentLoanInformationId,TypeId")] Component component)
         {
             if (ModelState.IsValid)
             {
@@ -83,7 +83,7 @@ namespace Mvc.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Id,Number,SerialNo,Status,AdminComment,UserComment,CurrentLoanInformationId,ComponentTypeId")] Component component)
+        public async Task<IActionResult> Edit(long id, [Bind("Id,Number,SerialNo,Status,AdminComment,UserComment,CurrentLoanInformationId,TypeId")] Component component)
         {
             if (id != component.Id)
             {

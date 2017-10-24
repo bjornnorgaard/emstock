@@ -6,7 +6,6 @@ namespace Models
     public class Component
     {
         public long Id { get; set; }
-        [DisplayName("Number")]
         public int Number { get; set; }
         [DisplayName("Serial no.")]
         public string SerialNo { get; set; }
@@ -18,7 +17,7 @@ namespace Models
         [DisplayName("Current loan")]
         public long? CurrentLoanInformationId { get; set; }
 
-        public int ComponentTypeId { get; set; }
+        public int TypeId { get; set; }
         public Type Type { get; set; }
     }
 }
