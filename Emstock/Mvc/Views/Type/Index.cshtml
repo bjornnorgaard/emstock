@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Models.Component>
+﻿@model IEnumerable<Models.Type>
 
 @{
     ViewData["Title"] = "Index";
@@ -13,25 +13,31 @@
     <thead>
         <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.Number)
+                    @Html.DisplayNameFor(model => model.Name)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.SerialNo)
+                    @Html.DisplayNameFor(model => model.Info)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Location)
                 </th>
                 <th>
                     @Html.DisplayNameFor(model => model.Status)
                 </th>
                 <th>
+                    @Html.DisplayNameFor(model => model.Datasheet)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.ImageUrl)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Manufacturer)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.WikiLink)
+                </th>
+                <th>
                     @Html.DisplayNameFor(model => model.AdminComment)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.UserComment)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.CurrentLoanInformationId)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.ComponentTypeId)
                 </th>
             <th></th>
         </tr>
@@ -40,25 +46,31 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Number)
+                @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.SerialNo)
+                @Html.DisplayFor(modelItem => item.Info)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Location)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Status)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.Datasheet)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ImageUrl)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Manufacturer)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.WikiLink)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.AdminComment)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserComment)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CurrentLoanInformationId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ComponentTypeId)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
