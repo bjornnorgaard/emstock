@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<Models.Type>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Types";
 }
 
 <h2>Index</h2>
@@ -27,9 +27,9 @@
                 <th>
                     @Html.DisplayNameFor(model => model.Datasheet)
                 </th>
-                <th>
+                @*<th>
                     @Html.DisplayNameFor(model => model.ImageUrl)
-                </th>
+                </th>*@
                 <th>
                     @Html.DisplayNameFor(model => model.Manufacturer)
                 </th>
@@ -60,9 +60,9 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Datasheet)
             </td>
-            <td>
+            @*<td>
                 @Html.DisplayFor(modelItem => item.ImageUrl)
-            </td>
+            </td>*@
             <td>
                 @Html.DisplayFor(modelItem => item.Manufacturer)
             </td>

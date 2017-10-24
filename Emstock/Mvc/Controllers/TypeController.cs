@@ -1,10 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DataAccess;
-using Models;
 using Type = Models.Type;
 
 namespace Mvc.Controllers
@@ -32,14 +30,14 @@ namespace Mvc.Controllers
                 return NotFound();
             }
 
-            var @type = await _context.Types
+            var type = await _context.Types
                 .SingleOrDefaultAsync(m => m.Id == id);
-            if (@type == null)
+            if (type == null)
             {
                 return NotFound();
             }
 
-            return View(@type);
+            return View(type);
         }
 
         // GET: Type/Create
@@ -53,15 +51,15 @@ namespace Mvc.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Info,Location,Status,Datasheet,ImageUrl,Manufacturer,WikiLink,AdminComment")] Type @type)
+        public async Task<IActionResult> Create([Bind("Id,Name,Info,Location,Status,Datasheet,ImageUrl,Manufacturer,WikiLink,AdminComment")] Type type)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(@type);
+                _context.Add(type);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(@type);
+            return View(type);
         }
 
         // GET: Type/Edit/5
@@ -72,12 +70,12 @@ namespace Mvc.Controllers
                 return NotFound();
             }
 
-            var @type = await _context.Types.SingleOrDefaultAsync(m => m.Id == id);
-            if (@type == null)
+            var type = await _context.Types.SingleOrDefaultAsync(m => m.Id == id);
+            if (type == null)
             {
                 return NotFound();
             }
-            return View(@type);
+            return View(type);
         }
 
         // POST: Type/Edit/5
@@ -85,9 +83,9 @@ namespace Mvc.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Id,Name,Info,Location,Status,Datasheet,ImageUrl,Manufacturer,WikiLink,AdminComment")] Type @type)
+        public async Task<IActionResult> Edit(long id, [Bind("Id,Name,Info,Location,Status,Datasheet,ImageUrl,Manufacturer,WikiLink,AdminComment")] Type type)
         {
-            if (id != @type.Id)
+            if (id != type.Id)
             {
                 return NotFound();
             }
@@ -96,12 +94,12 @@ namespace Mvc.Controllers
             {
                 try
                 {
-                    _context.Update(@type);
+                    _context.Update(type);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TypeExists(@type.Id))
+                    if (!TypeExists(type.Id))
                     {
                         return NotFound();
                     }
@@ -112,7 +110,7 @@ namespace Mvc.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(@type);
+            return View(type);
         }
 
         // GET: Type/Delete/5
@@ -123,14 +121,14 @@ namespace Mvc.Controllers
                 return NotFound();
             }
 
-            var @type = await _context.Types
+            var type = await _context.Types
                 .SingleOrDefaultAsync(m => m.Id == id);
-            if (@type == null)
+            if (type == null)
             {
                 return NotFound();
             }
 
-            return View(@type);
+            return View(type);
         }
 
         // POST: Type/Delete/5
@@ -138,8 +136,8 @@ namespace Mvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
-            var @type = await _context.Types.SingleOrDefaultAsync(m => m.Id == id);
-            _context.Types.Remove(@type);
+            var type = await _context.Types.SingleOrDefaultAsync(m => m.Id == id);
+            _context.Types.Remove(type);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

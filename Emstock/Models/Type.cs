@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using Models.Enums;
 
 namespace Models
@@ -13,7 +14,9 @@ namespace Models
         public string Datasheet { get; set; }
         public string ImageUrl { get; set; }
         public string Manufacturer { get; set; }
+        [DisplayName("Wiki link")]
         public string WikiLink { get; set; }
+        [DisplayName("Comment (adm)")]
         public string AdminComment { get; set; }
 
         public List<CategoryType> CategoryTypes { get; set; }
