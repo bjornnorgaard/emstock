@@ -9,5 +9,6 @@ namespace DataAccess
         public EmstockContext() { }
 
         public DbSet<Models.Component> Components { get; set; }
+        public DbSet<Models.EsImage> EsImages { get; set; }
     }
 }
