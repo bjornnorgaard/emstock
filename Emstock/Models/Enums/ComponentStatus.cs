@@ -2,7 +2,7 @@
 {
     public enum ComponentStatus
     {
-        Available,
+        Available = 1,
         ReservedLoaner,
         ReservedAdmin,
         Loaned,

@@ -2,7 +2,7 @@
 {
     public enum ComponentTypeStatus
     {
-        Available,
+        Available = 1,
         ReservedAdmin
     }
 }
