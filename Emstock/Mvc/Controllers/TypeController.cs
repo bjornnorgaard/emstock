@@ -74,6 +74,8 @@ namespace Mvc.Controllers
             }
 
             var type = await _context.Types.SingleOrDefaultAsync(m => m.Id == id);
+            // var categories = await _context.Categories.ToListAsync();
+
             if (type == null)
             {
                 return NotFound();
