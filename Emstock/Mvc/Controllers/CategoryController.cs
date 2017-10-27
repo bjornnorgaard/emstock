@@ -31,7 +31,10 @@ namespace Mvc.Controllers
             }
 
             var category = await _context.Categories
+                .Include(c => c.CategoryTypes)
+                .ThenInclude(c => c.Type)
                 .SingleOrDefaultAsync(m => m.Id == id);
+
             if (category == null)
             {
                 return NotFound();

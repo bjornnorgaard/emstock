@@ -4,10 +4,9 @@
     ViewData["Title"] = "Details";
 }
 
-<h2>Details</h2>
+<h2>Type Details</h2>
 
 <div>
-    <h4>Type</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
@@ -63,6 +62,24 @@
         </dt>
         <dd>
             @Html.DisplayFor(model => model.AdminComment)
+        </dd>
+        <dd>
+            <br/>
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.CategoryTypes)
+        </dt>
+        <dd>
+            <ul>
+                @foreach (var category in Model.CategoryTypes)
+                {
+                    <li>
+                        <a asp-controller="Category" asp-action="Details" asp-route-id="@category.CategoryId">
+                            @category.Category.Name
+                        </a>
+                    </li>
+                }
+            </ul>
         </dd>
     </dl>
 </div>
