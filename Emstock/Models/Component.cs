@@ -10,9 +10,9 @@ namespace Models
         [DisplayName("Serial no.")]
         public string SerialNo { get; set; }
         public ComponentStatus Status { get; set; }
-        [DisplayName("Comment (adm)")]
+        [DisplayName("Admin Comment")]
         public string AdminComment { get; set; }
-        [DisplayName("Comment (user)")]
+        [DisplayName("User Comment")]
         public string UserComment { get; set; }
         [DisplayName("Current loan")]
         public long? CurrentLoanInformationId { get; set; }
