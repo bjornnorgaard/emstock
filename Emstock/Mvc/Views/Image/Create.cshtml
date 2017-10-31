@@ -1,11 +1,8 @@
 ﻿@model Models.Image
-
 @{
     ViewData["Title"] = "Create";
 }
-
-<h2>Create</h2>
-
+<h2>Create Image</h2>
 <h4>Image</h4>
 <hr />
 <div class="row">
@@ -33,11 +30,9 @@
         </form>
     </div>
 </div>
-
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
-
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

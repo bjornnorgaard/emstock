@@ -4,7 +4,7 @@
     ViewData["Title"] = "Edit";
 }
 
-<h2>Edit</h2>
+<h2>Edit Component Type</h2>
 
 <h4>Type</h4>
 <hr />
@@ -36,15 +36,6 @@
                 </select>
                 <span asp-validation-for="Status" class="text-danger"></span>
             </div>
-            @*<div class="form-group">
-                <label asp-for="CategoryTypes" class="control-label"></label>
-                <select asp-for="CategoryTypes" class="form-control">
-                    @foreach (var cat in Model.CategoryTypes)
-                    {
-                        <option value="@cat.CategoryId">@cat.Category.Name</option>
-                    }
-                </select>
-            </div>*@
             <div class="form-group">
                 <label asp-for="Datasheet" class="control-label"></label>
                 <input asp-for="Datasheet" class="form-control" />
