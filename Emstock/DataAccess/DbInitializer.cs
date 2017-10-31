@@ -9,7 +9,6 @@ namespace DataAccess
     {
         public static void Initialize(EmstockContext context)
         {
-            context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
 
             var categories = new List<Category>

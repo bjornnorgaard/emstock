@@ -22,7 +22,7 @@ namespace Mvc
             services.AddMvc();
             services.AddDbContext<EmstockContext>(opts =>
             {
-                var connectionString = Configuration.GetConnectionString("LocalConnection");
+                var connectionString = Configuration.GetConnectionString("ProductionConnection");
                 opts.UseSqlServer(connectionString);
             });
         }
