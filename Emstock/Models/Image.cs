@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Models
 {
@@ -6,8 +7,10 @@ namespace Models
     {
         public long Id { get; set; }
         [MaxLength(128)]
+        [DisplayName("Image Mime Type")]
         public string ImageMimeType { get; set; }
         public byte[] Thumbnail { get; set; }
+        [DisplayName("Image Data")]
         public byte[] ImageData { get; set; }
     }
 }

@@ -16,13 +16,11 @@ namespace Mvc.Controllers
             _context = context;
         }
 
-        // GET: Type
         public async Task<IActionResult> Index()
         {
             return View(await _context.Types.ToListAsync());
         }
 
-        // GET: Type/Details/5
         public async Task<IActionResult> Details(long? id)
         {
             if (id == null)
@@ -43,15 +41,11 @@ namespace Mvc.Controllers
             return View(type);
         }
 
-        // GET: Type/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Type/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Info,Location,Status,Datasheet,ImageUrl,Manufacturer,WikiLink,AdminComment")] Type type)
@@ -65,7 +59,6 @@ namespace Mvc.Controllers
             return View(type);
         }
 
-        // GET: Type/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
             if (id == null)
@@ -74,7 +67,6 @@ namespace Mvc.Controllers
             }
 
             var type = await _context.Types.SingleOrDefaultAsync(m => m.Id == id);
-            // var categories = await _context.Categories.ToListAsync();
 
             if (type == null)
             {
@@ -83,9 +75,6 @@ namespace Mvc.Controllers
             return View(type);
         }
 
-        // POST: Type/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,Name,Info,Location,Status,Datasheet,ImageUrl,Manufacturer,WikiLink,AdminComment")] Type type)
@@ -108,17 +97,13 @@ namespace Mvc.Controllers
                     {
                         return NotFound();
                     }
-                    else
-                    {
-                        throw;
-                    }
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
             return View(type);
         }
 
-        // GET: Type/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
             if (id == null)
@@ -136,7 +121,6 @@ namespace Mvc.Controllers
             return View(type);
         }
 
-        // POST: Type/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)

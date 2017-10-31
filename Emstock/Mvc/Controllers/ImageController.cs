@@ -16,13 +16,11 @@ namespace Mvc.Controllers
             _context = context;
         }
 
-        // GET: Image
         public async Task<IActionResult> Index()
         {
             return View(await _context.Images.ToListAsync());
         }
 
-        // GET: Image/Details/5
         public async Task<IActionResult> Details(long? id)
         {
             if (id == null)
@@ -40,15 +38,11 @@ namespace Mvc.Controllers
             return View(image);
         }
 
-        // GET: Image/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Image/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,ImageMimeType,Thumbnail,ImageData")] Image image)
@@ -62,7 +56,6 @@ namespace Mvc.Controllers
             return View(image);
         }
 
-        // GET: Image/Edit/5
         public async Task<IActionResult> Edit(long? id)
         {
             if (id == null)
@@ -78,9 +71,6 @@ namespace Mvc.Controllers
             return View(image);
         }
 
-        // POST: Image/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,ImageMimeType,Thumbnail,ImageData")] Image image)
@@ -103,17 +93,13 @@ namespace Mvc.Controllers
                     {
                         return NotFound();
                     }
-                    else
-                    {
-                        throw;
-                    }
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
             return View(image);
         }
 
-        // GET: Image/Delete/5
         public async Task<IActionResult> Delete(long? id)
         {
             if (id == null)
@@ -131,7 +117,6 @@ namespace Mvc.Controllers
             return View(image);
         }
 
-        // POST: Image/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)
