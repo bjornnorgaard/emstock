@@ -81,12 +81,6 @@ namespace Mvc.Controllers
             model.Types = types.Select(x => new SelectListItem { Value = x.Id.ToString(), Text = x.Name }).ToList();
             model.Component = component;
 
-            if (component == null)
-            {
-                return NotFound();
-            }
-
-
             return View(model);
         }
 
