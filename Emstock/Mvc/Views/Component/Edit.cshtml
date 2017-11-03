@@ -1,4 +1,4 @@
-﻿@model Models.Component
+﻿@model Mvc.ViewModels.ComponentViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -12,20 +12,19 @@
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
             <div class="form-group">
-                <label asp-for="Number" class="control-label"></label>
-                <input asp-for="Number" class="form-control" />
-                <span asp-validation-for="Number" class="text-danger"></span>
+                <label asp-for="Component.Number" class="control-label"></label>
+                <input asp-for="Component.Number" class="form-control" />
+                <span asp-validation-for="Component.Number" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="SerialNo" class="control-label"></label>
-                <input asp-for="SerialNo" class="form-control" />
-                <span asp-validation-for="SerialNo" class="text-danger"></span>
+                <label asp-for="Component.SerialNo" class="control-label"></label>
+                <input asp-for="Component.SerialNo" class="form-control" />
+                <span asp-validation-for="Component.SerialNo" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <select asp-for="Status" class="form-control">
+                <label asp-for="Component.Status" class="control-label"></label>
+                <select asp-for="Component.Status" class="form-control">
                     <option value="1">Available      </option>
                     <option value="2">ReservedLoaner </option>
                     <option value="3">ReservedAdmin  </option>
@@ -35,22 +34,27 @@
                     <option value="7">Lost           </option>
                     <option value="8">NeverReturned  </option>
                 </select>
-                <span asp-validation-for="Status" class="text-danger"></span>
+                <span asp-validation-for="Component.Status" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="AdminComment" class="control-label"></label>
-                <input asp-for="AdminComment" class="form-control" />
-                <span asp-validation-for="AdminComment" class="text-danger"></span>
+                <label asp-for="Component.AdminComment" class="control-label"></label>
+                <input asp-for="Component.AdminComment" class="form-control" />
+                <span asp-validation-for="Component.AdminComment" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="UserComment" class="control-label"></label>
-                <input asp-for="UserComment" class="form-control" />
-                <span asp-validation-for="UserComment" class="text-danger"></span>
+                <label asp-for="Component.Type" class="control-label"></label>
+                <select asp-for="TypeString" asp-items="Model.Types" class="form-control">
+                </select>
             </div>
             <div class="form-group">
-                <label asp-for="CurrentLoanInformationId" class="control-label"></label>
-                <input asp-for="CurrentLoanInformationId" class="form-control" />
-                <span asp-validation-for="CurrentLoanInformationId" class="text-danger"></span>
+                <label asp-for="Component.UserComment" class="control-label"></label>
+                <input asp-for="Component.UserComment" class="form-control" />
+                <span asp-validation-for="Component.UserComment" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Component.CurrentLoanInformationId" class="control-label"></label>
+                <input asp-for="Component.CurrentLoanInformationId" class="form-control" />
+                <span asp-validation-for="Component.CurrentLoanInformationId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-default" />

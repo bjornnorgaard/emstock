@@ -3,7 +3,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DataAccess;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Models;
+using Mvc.ViewModels;
 
 namespace Mvc.Controllers
 {
@@ -40,20 +42,29 @@ namespace Mvc.Controllers
 
         public IActionResult Create()
         {
-            return View();
+            var model = new ComponentViewModel();
+
+            var types = _context.Types.ToList();
+            model.Types = types.Select(x => new SelectListItem{Value = x.Id.ToString(), Text = x.Name}).ToList();
+
+            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Number,SerialNo,Status,AdminComment,UserComment,CurrentLoanInformationId,TypeId")] Component component)
+        public async Task<IActionResult> Create(ComponentViewModel componentViewModel)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(component);
+                var type = _context.Types.FirstOrDefault(x => x.Id == int.Parse(componentViewModel.TypeString));
+                componentViewModel.Component.Type = type;
+                componentViewModel.Component.TypeId = (int)type.Id;
+
+                _context.Add(componentViewModel.Component);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(component);
+            return View(componentViewModel);
         }
 
         public async Task<IActionResult> Edit(long? id)
@@ -64,18 +75,26 @@ namespace Mvc.Controllers
             }
 
             var component = await _context.Components.SingleOrDefaultAsync(m => m.Id == id);
+            var model = new ComponentViewModel();
+            var types = _context.Types.ToList();
+            model.TypeString = component.TypeId.ToString();
+            model.Types = types.Select(x => new SelectListItem { Value = x.Id.ToString(), Text = x.Name }).ToList();
+            model.Component = component;
+
             if (component == null)
             {
                 return NotFound();
             }
-            return View(component);
+
+
+            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Id,Number,SerialNo,Status,AdminComment,UserComment,CurrentLoanInformationId,TypeId")] Component component)
+        public async Task<IActionResult> Edit(long id, [Bind("Component,TypeString")] ComponentViewModel component)
         {
-            if (id != component.Id)
+            if (id != component.Component.Id)
             {
                 return NotFound();
             }
@@ -84,12 +103,16 @@ namespace Mvc.Controllers
             {
                 try
                 {
+                    var type = _context.Types.FirstOrDefault(x => x.Id == int.Parse(component.TypeString));
+                    component.Component.Type = type;
+                    component.Component.Id = (int)type.Id;
+
                     _context.Update(component);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ComponentExists(component.Id))
+                    if (!ComponentExists(component.Component.Id))
                     {
                         return NotFound();
                     }
