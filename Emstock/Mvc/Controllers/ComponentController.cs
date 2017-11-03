@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DataAccess;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Models;
 using Mvc.ViewModels;
 
 namespace Mvc.Controllers
@@ -25,28 +24,17 @@ namespace Mvc.Controllers
 
         public async Task<IActionResult> Details(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var component = await _context.Components
-                .SingleOrDefaultAsync(m => m.Id == id);
-            if (component == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
+            var component = await _context.Components.SingleOrDefaultAsync(m => m.Id == id);
+            if (component == null) return NotFound();
             return View(component);
         }
 
         public IActionResult Create()
         {
             var model = new ComponentViewModel();
-
             var types = _context.Types.ToList();
-            model.Types = types.Select(x => new SelectListItem{Value = x.Id.ToString(), Text = x.Name}).ToList();
-
+            model.Types = types.Select(x => new SelectListItem { Value = x.Id.ToString(), Text = x.Name }).ToList();
             return View(model);
         }
 
@@ -54,25 +42,20 @@ namespace Mvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(ComponentViewModel componentViewModel)
         {
-            if (ModelState.IsValid)
-            {
-                var type = _context.Types.FirstOrDefault(x => x.Id == int.Parse(componentViewModel.TypeString));
-                componentViewModel.Component.Type = type;
-                componentViewModel.Component.TypeId = (int)type.Id;
+            if (!ModelState.IsValid) return View(componentViewModel);
 
-                _context.Add(componentViewModel.Component);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(componentViewModel);
+            var type = _context.Types.FirstOrDefault(x => x.Id == int.Parse(componentViewModel.TypeString));
+            componentViewModel.Component.Type = type;
+            componentViewModel.Component.TypeId = (int)type.Id;
+            _context.Add(componentViewModel.Component);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> Edit(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var component = await _context.Components.SingleOrDefaultAsync(m => m.Id == id);
             var model = new ComponentViewModel();
@@ -88,48 +71,32 @@ namespace Mvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Component,TypeString")] ComponentViewModel component)
         {
-            if (id != component.Component.Id)
-            {
-                return NotFound();
-            }
+            if (id != component.Component.Id) return NotFound();
+            if (!ModelState.IsValid) return View(component);
 
-            if (ModelState.IsValid)
+            try
             {
-                try
-                {
-                    var type = _context.Types.FirstOrDefault(x => x.Id == int.Parse(component.TypeString));
-                    component.Component.Type = type;
-                    component.Component.Id = (int)type.Id;
+                var type = _context.Types.FirstOrDefault(x => x.Id == int.Parse(component.TypeString));
+                component.Component.Type = type;
+                component.Component.Id = (int)type.Id;
 
-                    _context.Update(component);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ComponentExists(component.Component.Id))
-                    {
-                        return NotFound();
-                    }
-                    throw;
-                }
-                return RedirectToAction(nameof(Index));
+                _context.Update(component);
+                await _context.SaveChangesAsync();
             }
-            return View(component);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ComponentExists(component.Component.Id)) return NotFound();
+                throw;
+            }
+            return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> Delete(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var component = await _context.Components
-                .SingleOrDefaultAsync(m => m.Id == id);
-            if (component == null)
-            {
-                return NotFound();
-            }
+            var component = await _context.Components.SingleOrDefaultAsync(m => m.Id == id);
+            if (component == null) return NotFound();
 
             return View(component);
         }
