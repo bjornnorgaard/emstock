@@ -44,7 +44,7 @@ namespace Mvc.Controllers
         {
             if (!ModelState.IsValid) return View(componentViewModel);
 
-            var type = _context.Types.FirstOrDefault(x => x.Id == int.Parse(componentViewModel.TypeString));
+            var type = _context.Types.FirstOrDefault(x => x.Id == int.Parse(componentViewModel.TypeId));
             componentViewModel.Component.Type = type;
             componentViewModel.Component.TypeId = (int)type.Id;
             _context.Add(componentViewModel.Component);
@@ -60,7 +60,7 @@ namespace Mvc.Controllers
             var component = await _context.Components.SingleOrDefaultAsync(m => m.Id == id);
             var model = new ComponentViewModel();
             var types = _context.Types.ToList();
-            model.TypeString = component.TypeId.ToString();
+            model.TypeId = component.TypeId.ToString();
             model.Types = types.Select(x => new SelectListItem { Value = x.Id.ToString(), Text = x.Name }).ToList();
             model.Component = component;
 
@@ -69,14 +69,15 @@ namespace Mvc.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Component,TypeString")] ComponentViewModel component)
+        public async Task<IActionResult> Edit(long id, ComponentViewModel component)
         {
+            var oij = Request.Form;
             if (id != component.Component.Id) return NotFound();
             if (!ModelState.IsValid) return View(component);
 
             try
             {
-                var type = _context.Types.FirstOrDefault(x => x.Id == int.Parse(component.TypeString));
+                var type = _context.Types.FirstOrDefault(x => x.Id == int.Parse(component.TypeId));
                 component.Component.Type = type;
                 component.Component.Id = (int)type.Id;
 
