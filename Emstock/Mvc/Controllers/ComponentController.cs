@@ -1,10 +1,15 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DataAccess;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Primitives;
 using Models;
+using Models.Enums;
 using Mvc.ViewModels;
 
 namespace Mvc.Controllers
@@ -20,7 +25,7 @@ namespace Mvc.Controllers
 
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Components.ToListAsync());
+            return View(await _context.Components.Include(x => x.Type).ToListAsync());
         }
 
         public async Task<IActionResult> Details(long? id)
@@ -56,7 +61,7 @@ namespace Mvc.Controllers
         {
             if (ModelState.IsValid)
             {
-                var type = _context.Types.FirstOrDefault(x => x.Id == int.Parse(componentViewModel.TypeString));
+                var type = _context.Types.FirstOrDefault(x => x.Id == int.Parse(componentViewModel.TypeId));
                 componentViewModel.Component.Type = type;
                 componentViewModel.Component.TypeId = (int)type.Id;
 
@@ -77,7 +82,7 @@ namespace Mvc.Controllers
             var component = await _context.Components.SingleOrDefaultAsync(m => m.Id == id);
             var model = new ComponentViewModel();
             var types = _context.Types.ToList();
-            model.TypeString = component.TypeId.ToString();
+            model.TypeId = component.TypeId.ToString();
             model.Types = types.Select(x => new SelectListItem { Value = x.Id.ToString(), Text = x.Name }).ToList();
             model.Component = component;
 
@@ -85,34 +90,29 @@ namespace Mvc.Controllers
             {
                 return NotFound();
             }
-
-
+            
             return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Component,TypeString")] ComponentViewModel component)
+        public async Task<IActionResult> Edit(long id)
         {
-            if (id != component.Component.Id)
-            {
-                return NotFound();
-            }
+            var editComponent = CreateComponentFromRequestBody(Request.Form, id);
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    var type = _context.Types.FirstOrDefault(x => x.Id == int.Parse(component.TypeString));
-                    component.Component.Type = type;
-                    component.Component.Id = (int)type.Id;
+                    var type = _context.Types.FirstOrDefault(x => x.Id == editComponent.TypeId);
+                    editComponent.Type = type;
 
-                    _context.Update(component);
+                    _context.Update(editComponent);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ComponentExists(component.Component.Id))
+                    if (!ComponentExists(editComponent.Id))
                     {
                         return NotFound();
                     }
@@ -120,7 +120,44 @@ namespace Mvc.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(component);
+            return View(new ComponentViewModel{Component = editComponent,
+                TypeId = editComponent.TypeId.ToString(),
+                Types = _context.Types.Select(x => new SelectListItem{Text = x.Name,
+                    Value = x.Id.ToString()}).ToList()});
+        }
+
+        private Component CreateComponentFromRequestBody(IFormCollection requestForm, long id)
+        {
+            Component editComponent = new Component();
+            editComponent.Id = id;
+
+            StringValues number;
+            if (requestForm.TryGetValue("Component.Number", out number))
+                editComponent.Number = int.Parse(number);
+            StringValues serialNumber;
+            if (requestForm.TryGetValue("Component.SerialNo", out serialNumber))
+                editComponent.SerialNo = serialNumber;
+            StringValues status;
+            if (requestForm.TryGetValue("Component.Status", out status))
+                if (Enum.TryParse(status, out ComponentStatus statusEnum))
+                    editComponent.Status = statusEnum;
+            StringValues adminComment;
+            if (requestForm.TryGetValue("Component.AdminComment", out adminComment))
+                editComponent.AdminComment = adminComment;
+            StringValues userComment;
+            if (requestForm.TryGetValue("Component.UserComment", out userComment))
+                editComponent.UserComment = userComment;
+            StringValues currentLoanInformationId;
+            if (requestForm.TryGetValue("Component.CurrentLoanInformationId", out currentLoanInformationId))
+                editComponent.CurrentLoanInformationId = StringValues.IsNullOrEmpty(currentLoanInformationId) ? (long?)null : long.Parse(currentLoanInformationId);
+            
+            
+            StringValues TypeId;
+            if (requestForm.TryGetValue("TypeId", out TypeId))
+                editComponent.TypeId = int.Parse(TypeId);
+
+
+            return editComponent;
         }
 
         public async Task<IActionResult> Delete(long? id)

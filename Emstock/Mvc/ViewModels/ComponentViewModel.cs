@@ -15,7 +15,7 @@ namespace Mvc.ViewModels
 
         public List<SelectListItem> Types { get; set; }
 
-        public string TypeString { get; set; }
+        public string TypeId { get; set; }
 
         public Component Component
         {
