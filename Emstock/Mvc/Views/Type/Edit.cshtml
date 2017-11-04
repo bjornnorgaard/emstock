@@ -1,4 +1,4 @@
-﻿@model Models.Type
+﻿@model Mvc.ViewModels.TypeViewModel
 
 @{
     ViewData["Title"] = "Edit";
@@ -12,54 +12,59 @@
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="Type.Id" />
             <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+                <label asp-for="Type.Name" class="control-label"></label>
+                <input asp-for="Type.Name" class="form-control" />
+                <span asp-validation-for="Type.Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Info" class="control-label"></label>
-                <input asp-for="Info" class="form-control" />
-                <span asp-validation-for="Info" class="text-danger"></span>
+                <label asp-for="Type.Info" class="control-label"></label>
+                <input asp-for="Type.Info" class="form-control" />
+                <span asp-validation-for="Type.Info" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Location" class="control-label"></label>
-                <input asp-for="Location" class="form-control" />
-                <span asp-validation-for="Location" class="text-danger"></span>
+                <label asp-for="Type.Location" class="control-label"></label>
+                <input asp-for="Type.Location" class="form-control" />
+                <span asp-validation-for="Type.Location" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <select asp-for="Status" class="form-control">
+                <label asp-for="Categories" class="control-label"></label>
+                <label>- Ctrl + Left click to select more than one.</label>
+                <select asp-for="SelectedCategories" asp-items="Model.Categories" class="form-control"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Type.Status" class="control-label"></label>
+                <select asp-for="Type.Status" class="form-control">
                     <option value="1">Available</option>
                     <option value="2">Reserved by Admin</option>
                 </select>
-                <span asp-validation-for="Status" class="text-danger"></span>
+                <span asp-validation-for="Type.Status" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Datasheet" class="control-label"></label>
-                <input asp-for="Datasheet" class="form-control" />
-                <span asp-validation-for="Datasheet" class="text-danger"></span>
+                <label asp-for="Type.Datasheet" class="control-label"></label>
+                <input asp-for="Type.Datasheet" class="form-control" />
+                <span asp-validation-for="Type.Datasheet" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ImageUrl" class="control-label"></label>
-                <input asp-for="ImageUrl" class="form-control" />
-                <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                <label asp-for="Type.ImageUrl" class="control-label"></label>
+                <input asp-for="Type.ImageUrl" class="form-control" />
+                <span asp-validation-for="Type.ImageUrl" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Manufacturer" class="control-label"></label>
-                <input asp-for="Manufacturer" class="form-control" />
-                <span asp-validation-for="Manufacturer" class="text-danger"></span>
+                <label asp-for="Type.Manufacturer" class="control-label"></label>
+                <input asp-for="Type.Manufacturer" class="form-control" />
+                <span asp-validation-for="Type.Manufacturer" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="WikiLink" class="control-label"></label>
-                <input asp-for="WikiLink" class="form-control" />
-                <span asp-validation-for="WikiLink" class="text-danger"></span>
+                <label asp-for="Type.WikiLink" class="control-label"></label>
+                <input asp-for="Type.WikiLink" class="form-control" />
+                <span asp-validation-for="Type.WikiLink" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="AdminComment" class="control-label"></label>
-                <input asp-for="AdminComment" class="form-control" />
-                <span asp-validation-for="AdminComment" class="text-danger"></span>
+                <label asp-for="Type.AdminComment" class="control-label"></label>
+                <input asp-for="Type.AdminComment" class="form-control" />
+                <span asp-validation-for="Type.AdminComment" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

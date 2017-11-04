@@ -1,8 +1,12 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DataAccess;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Models;
+using Mvc.ViewModels;
 using Type = Models.Type;
 
 namespace Mvc.Controllers
@@ -18,7 +22,10 @@ namespace Mvc.Controllers
 
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Types.ToListAsync());
+            var types = await _context.Types.Include(x => x.CategoryTypes)
+                .ThenInclude(t => t.Category).ToListAsync();
+
+            return View(types);
         }
 
         public async Task<IActionResult> Details(long? id)
@@ -43,20 +50,33 @@ namespace Mvc.Controllers
 
         public IActionResult Create()
         {
-            return View();
+            var model = new TypeViewModel();
+
+            var categories = _context.Categories.ToList();
+            model.Categories = categories.Select(x => new SelectListItem { Value = x.Id.ToString(), Text = x.Name }).ToList();
+
+            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Info,Location,Status,Datasheet,ImageUrl,Manufacturer,WikiLink,AdminComment")] Type type)
+        public async Task<IActionResult> Create(TypeViewModel typeViewModel)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(type);
+                var categories = _context.Categories.Where(l => typeViewModel.SelectedCategories.Contains(l.Id.ToString()));
+                
+                typeViewModel.Type.CategoryTypes = new List<CategoryType>();
+                foreach (var category in categories)
+                {
+                    typeViewModel.Type.CategoryTypes.Add(new CategoryType{CategoryId = category.Id, Type = typeViewModel.Type});
+                }
+
+                _context.Add(typeViewModel.Type);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(type);
+            return View(typeViewModel);
         }
 
         public async Task<IActionResult> Edit(long? id)
@@ -66,20 +86,30 @@ namespace Mvc.Controllers
                 return NotFound();
             }
 
-            var type = await _context.Types.SingleOrDefaultAsync(m => m.Id == id);
+            var model = new TypeViewModel();
+
+            var categories = _context.Categories.ToListAsync();
+            var type = _context.Types.Include(x => x.CategoryTypes)
+                .SingleOrDefaultAsync(m => m.Id == id);
+
+            Task.WaitAll(categories, type);
+
+            model.Categories = categories.Result.Select(x => new SelectListItem { Value = x.Id.ToString(), Text = x.Name }).ToList();
+            model.Type = type.Result;
+            model.SelectedCategories = type.Result.CategoryTypes.Select(x => x.CategoryId.ToString()).ToList();
 
             if (type == null)
             {
                 return NotFound();
             }
-            return View(type);
+            return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Id,Name,Info,Location,Status,Datasheet,ImageUrl,Manufacturer,WikiLink,AdminComment")] Type type)
+        public async Task<IActionResult> Edit(long id, TypeViewModel type)
         {
-            if (id != type.Id)
+            if (id != type.Type.Id)
             {
                 return NotFound();
             }
@@ -88,12 +118,12 @@ namespace Mvc.Controllers
             {
                 try
                 {
-                    _context.Update(type);
+                    //_context.Update(type.Type);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TypeExists(type.Id))
+                    if (!TypeExists(type.Type.Id))
                     {
                         return NotFound();
                     }
