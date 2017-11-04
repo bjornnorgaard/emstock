@@ -1,30 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using DataAccess;
+﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using Models;
-using Type = Models.Type;
 
 namespace Mvc.ViewModels
 {
     public class ComponentViewModel
     {
-        private Component _component = new Component();
-
+        public Component Component { get; set; }
         public List<SelectListItem> Types { get; set; }
-
         public string TypeId { get; set; }
-
-        public Component Component
-        {
-            get { return _component; }
-            set
-            {
-                if (value == null) throw new ArgumentNullException(nameof(value));
-                _component = value;
-            }
-        }
     }
 }
