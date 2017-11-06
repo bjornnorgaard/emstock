@@ -1,11 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DataAccess;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Primitives;
 using Models;
+using Models.Enums;
 using Mvc.ViewModels;
 using Type = Models.Type;
 
@@ -107,23 +111,21 @@ namespace Mvc.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, TypeViewModel type)
+        public async Task<IActionResult> Edit(long id)
         {
-            if (id != type.Type.Id)
-            {
-                return NotFound();
-            }
+            var editType = CreateTypeFromRequestBody(Request.Form, id);
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    //_context.Update(type.Type);
-                    await _context.SaveChangesAsync();
+                    _context.Update(editType);
+                    UpdateManyToManyRelationship(Request.Form, id);
+                    _context.SaveChanges();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TypeExists(type.Type.Id))
+                    if (!TypeExists(editType.Id))
                     {
                         return NotFound();
                     }
@@ -131,7 +133,65 @@ namespace Mvc.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(type);
+            return View(new TypeViewModel{Type = editType});
+        }
+
+        private void UpdateManyToManyRelationship(IFormCollection requestForm, long id)
+        {
+            //Remove old relations
+            IQueryable<CategoryType> categoryTypes = _context.CategoryType.Where(x => x.TypeId == id);
+            
+            StringValues categoryIds;
+            if (requestForm.TryGetValue("SelectedCategories", out categoryIds))
+            {
+                // Remove old category types
+                _context.CategoryType.RemoveRange(categoryTypes);
+
+                _context.SaveChanges();
+
+                var categoryList = new List<string>(categoryIds.ToString().Split(','))
+                    .Select(x => new CategoryType{CategoryId = long.Parse(x), TypeId = id});
+
+                _context.CategoryType.AddRange(categoryList);
+            }
+        }
+
+
+        private Type CreateTypeFromRequestBody(IFormCollection requestForm, long id)
+        {
+            Type editType = new Type();
+            editType.Id = id;
+
+            StringValues name;
+            if (requestForm.TryGetValue("Type.Name", out name))
+                editType.Name = name;
+            StringValues info;
+            if (requestForm.TryGetValue("Type.Info", out info))
+                editType.Info = info;
+            StringValues location;
+            if (requestForm.TryGetValue("Type.Location", out location))
+                editType.Location = location;
+            StringValues status;
+            if (requestForm.TryGetValue("Type.Status", out status))
+                if (Enum.TryParse(status, out ComponentTypeStatus statusEnum))
+                    editType.Status = statusEnum;
+            StringValues dataSheet;
+            if (requestForm.TryGetValue("Type.Datasheet", out dataSheet))
+                editType.Datasheet = dataSheet;
+            StringValues imageUrl;
+            if (requestForm.TryGetValue("Type.ImageUrl", out imageUrl))
+                editType.ImageUrl = imageUrl;
+            StringValues manufacturer;
+            if (requestForm.TryGetValue("Type.Manufacturer", out manufacturer))
+                editType.Manufacturer = manufacturer;
+            StringValues wikiLink;
+            if (requestForm.TryGetValue("Type.WikiLink", out wikiLink))
+                editType.WikiLink = wikiLink;
+            StringValues adminComment;
+            if (requestForm.TryGetValue("Type.AdminComment", out adminComment))
+                editType.AdminComment = adminComment;
+
+            return editType;
         }
 
         public async Task<IActionResult> Delete(long? id)

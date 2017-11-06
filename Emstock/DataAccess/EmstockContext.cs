@@ -8,6 +8,7 @@ namespace DataAccess
         public DbSet<Models.Image> Images { get; set; }
         public DbSet<Models.Type> Types { get; set; }
         public DbSet<Models.Category> Categories { get; set; }
+        public DbSet<Models.CategoryType> CategoryType { get; set; }
 
         public EmstockContext(DbContextOptions<EmstockContext> options) : base(options) { }
 

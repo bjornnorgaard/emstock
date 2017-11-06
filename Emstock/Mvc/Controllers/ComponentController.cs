@@ -151,12 +151,10 @@ namespace Mvc.Controllers
             if (requestForm.TryGetValue("Component.CurrentLoanInformationId", out currentLoanInformationId))
                 editComponent.CurrentLoanInformationId = StringValues.IsNullOrEmpty(currentLoanInformationId) ? (long?)null : long.Parse(currentLoanInformationId);
             
-            
             StringValues TypeId;
             if (requestForm.TryGetValue("TypeId", out TypeId))
                 editComponent.TypeId = int.Parse(TypeId);
-
-
+            
             return editComponent;
         }
 

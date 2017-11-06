@@ -123,12 +123,12 @@ namespace DataAccess.Migrations
             modelBuilder.Entity("Models.CategoryType", b =>
                 {
                     b.HasOne("Models.Category", "Category")
-                        .WithMany("CategoryTypes")
+                        .WithMany("CategoryType")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Models.Type", "Type")
-                        .WithMany("CategoryTypes")
+                        .WithMany("CategoryType")
                         .HasForeignKey("TypeId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
