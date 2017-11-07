@@ -53,7 +53,9 @@
                     @Html.DisplayFor(modelItem => item.AdminComment)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Type.Name)
+                    <a asp-controller="Type" asp-action="Details" asp-route-id="@item.Type.Id">
+                        @Html.DisplayFor(modelItem => item.Type.Name)
+                    </a>
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.UserComment)

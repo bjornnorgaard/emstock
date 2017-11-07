@@ -53,8 +53,12 @@
                     @Html.DisplayFor(modelItem => item.Info)
                 </td>
                 <td>
-                    @foreach(var category in item.CategoryTypes)
-                    {<p>@category.Category.Name</p>}
+                    @foreach (var category in item.CategoryTypes)
+                    {
+                        <a asp-controller="Category" asp-action="Details" asp-route-id="@category.CategoryId">
+                            <p>@category.Category.Name</p>
+                        </a>
+                    }
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.Location)

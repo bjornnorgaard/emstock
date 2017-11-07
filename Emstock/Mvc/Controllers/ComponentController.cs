@@ -24,7 +24,10 @@ namespace Mvc.Controllers
 
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Components.Include(x => x.Type).ToListAsync());
+            var components = _context.Components
+                .Include(x => x.Type)
+                .ToListAsync();
+            return View(await components);
         }
 
         public async Task<IActionResult> Details(long? id)
