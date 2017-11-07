@@ -23,18 +23,11 @@ namespace Mvc.Controllers
 
         public async Task<IActionResult> Details(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var image = await _context.Images
-                .SingleOrDefaultAsync(m => m.Id == id);
-            if (image == null)
-            {
-                return NotFound();
-            }
+            var image = await _context.Images.SingleOrDefaultAsync(m => m.Id == id);
 
+            if (image == null) return NotFound();
             return View(image);
         }
 
@@ -47,27 +40,21 @@ namespace Mvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,ImageMimeType,Thumbnail,ImageData")] Image image)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(image);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(image);
+            if (!ModelState.IsValid) return View(image);
+
+            _context.Add(image);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> Edit(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var image = await _context.Images.SingleOrDefaultAsync(m => m.Id == id);
-            if (image == null)
-            {
-                return NotFound();
-            }
+
+            if (image == null) return NotFound();
             return View(image);
         }
 
@@ -75,45 +62,28 @@ namespace Mvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,ImageMimeType,Thumbnail,ImageData")] Image image)
         {
-            if (id != image.Id)
+            if (id != image.Id) return NotFound();
+            if (!ModelState.IsValid) return View(image);
+            try
             {
-                return NotFound();
+                _context.Update(image);
+                await _context.SaveChangesAsync();
             }
-
-            if (ModelState.IsValid)
+            catch (DbUpdateConcurrencyException)
             {
-                try
-                {
-                    _context.Update(image);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ImageExists(image.Id))
-                    {
-                        return NotFound();
-                    }
-                    throw;
-                }
-                return RedirectToAction(nameof(Index));
+                if (!ImageExists(image.Id)) return NotFound();
+                throw;
             }
-            return View(image);
+            return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> Delete(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var image = await _context.Images
-                .SingleOrDefaultAsync(m => m.Id == id);
-            if (image == null)
-            {
-                return NotFound();
-            }
+            var image = await _context.Images.SingleOrDefaultAsync(m => m.Id == id);
 
+            if (image == null) return NotFound();
             return View(image);
         }
 

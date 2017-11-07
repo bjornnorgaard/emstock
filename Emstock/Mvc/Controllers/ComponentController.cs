@@ -58,23 +58,29 @@ namespace Mvc.Controllers
         public async Task<IActionResult> Create(ComponentViewModel componentViewModel)
         {
             if (!ModelState.IsValid) return View(componentViewModel);
+
             var type = _context.Types.FirstOrDefault(x => x.Id == int.Parse(componentViewModel.TypeId));
             componentViewModel.Component.Type = type;
             componentViewModel.Component.TypeId = (int)type.Id;
+
             _context.Add(componentViewModel.Component);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> Edit(long? id)
         {
             if (id == null) return NotFound();
+
             var component = await _context.Components.SingleOrDefaultAsync(m => m.Id == id);
             var model = new ComponentViewModel();
             var types = _context.Types.ToList();
+
             model.TypeId = component.TypeId.ToString();
             model.Types = types.Select(x => new SelectListItem { Value = x.Id.ToString(), Text = x.Name }).ToList();
             model.Component = component;
+
             return View(model);
         }
 
@@ -137,8 +143,10 @@ namespace Mvc.Controllers
         public async Task<IActionResult> Delete(long? id)
         {
             if (id == null) return NotFound();
+
             var component = await _context.Components
                 .SingleOrDefaultAsync(m => m.Id == id);
+
             if (component == null) return NotFound();
             return View(component);
         }
@@ -148,8 +156,10 @@ namespace Mvc.Controllers
         public async Task<IActionResult> DeleteConfirmed(long id)
         {
             var component = await _context.Components.SingleOrDefaultAsync(m => m.Id == id);
+
             _context.Components.Remove(component);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 

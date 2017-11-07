@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using DataAccess;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Primitives;
 using Models;
 using Models.Enums;
 using Mvc.ViewModels;
@@ -26,7 +25,8 @@ namespace Mvc.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var types = await _context.Types.Include(x => x.CategoryTypes)
+            var types = await _context.Types
+                .Include(x => x.CategoryTypes)
                 .ThenInclude(t => t.Category).ToListAsync();
 
             return View(types);
@@ -34,20 +34,14 @@ namespace Mvc.Controllers
 
         public async Task<IActionResult> Details(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var type = await _context.Types
                 .Include(t => t.CategoryTypes)
                 .ThenInclude(t => t.Category)
                 .SingleOrDefaultAsync(m => m.Id == id);
 
-            if (type == null)
-            {
-                return NotFound();
-            }
+            if (type == null) return NotFound();
 
             return View(type);
         }
@@ -57,7 +51,11 @@ namespace Mvc.Controllers
             var model = new TypeViewModel();
 
             var categories = _context.Categories.ToList();
-            model.Categories = categories.Select(x => new SelectListItem { Value = x.Id.ToString(), Text = x.Name }).ToList();
+            model.Categories = categories.Select(x => new SelectListItem
+            {
+                Value = x.Id.ToString(),
+                Text = x.Name
+            }).ToList();
 
             return View(model);
         }
@@ -66,30 +64,26 @@ namespace Mvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(TypeViewModel typeViewModel)
         {
-            if (ModelState.IsValid)
-            {
-                var categories = _context.Categories.Where(l => typeViewModel.SelectedCategories.Contains(l.Id.ToString()));
-                
-                typeViewModel.Type.CategoryTypes = new List<CategoryType>();
-                foreach (var category in categories)
-                {
-                    typeViewModel.Type.CategoryTypes.Add(new CategoryType{CategoryId = category.Id, Type = typeViewModel.Type});
-                }
+            if (!ModelState.IsValid) return View(typeViewModel);
 
-                _context.Add(typeViewModel.Type);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+            var categories = _context.Categories
+                .Where(l => typeViewModel.SelectedCategories.Contains(l.Id.ToString()));
+
+            typeViewModel.Type.CategoryTypes = new List<CategoryType>();
+            foreach (var category in categories)
+            {
+                typeViewModel.Type.CategoryTypes.Add(new CategoryType { CategoryId = category.Id, Type = typeViewModel.Type });
             }
-            return View(typeViewModel);
+
+            _context.Add(typeViewModel.Type);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Edit(long? id)
+        public IActionResult Edit(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null)return NotFound();
             var model = new TypeViewModel();
 
             var categories = _context.Categories.ToListAsync();
@@ -102,112 +96,69 @@ namespace Mvc.Controllers
             model.Type = type.Result;
             model.SelectedCategories = type.Result.CategoryTypes.Select(x => x.CategoryId.ToString()).ToList();
 
-            if (type == null)
-            {
-                return NotFound();
-            }
             return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id)
+        public IActionResult Edit(long id)
         {
             var editType = CreateTypeFromRequestBody(Request.Form, id);
-
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid) return View(new TypeViewModel {Type = editType});
+            try
             {
-                try
-                {
-                    _context.Update(editType);
-                    UpdateManyToManyRelationship(Request.Form, id);
-                    _context.SaveChanges();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!TypeExists(editType.Id))
-                    {
-                        return NotFound();
-                    }
-                    throw;
-                }
-                return RedirectToAction(nameof(Index));
+                _context.Update(editType);
+                UpdateManyToManyRelationship(Request.Form, id);
+                _context.SaveChanges();
             }
-            return View(new TypeViewModel{Type = editType});
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!TypeExists(editType.Id))return NotFound();
+                throw;
+            }
+            return RedirectToAction(nameof(Index));
         }
 
         private void UpdateManyToManyRelationship(IFormCollection requestForm, long id)
         {
-            //Remove old relations
-            IQueryable<CategoryType> categoryTypes = _context.CategoryType.Where(x => x.TypeId == id);
-            
-            StringValues categoryIds;
-            if (requestForm.TryGetValue("SelectedCategories", out categoryIds))
-            {
-                // Remove old category types
-                _context.CategoryType.RemoveRange(categoryTypes);
+            var categoryTypes = _context.CategoryType.Where(x => x.TypeId == id);
+            if (!requestForm.TryGetValue("SelectedCategories", out var categoryIds)) return;
 
-                _context.SaveChanges();
+            _context.CategoryType.RemoveRange(categoryTypes);
+            _context.SaveChanges();
 
-                var categoryList = new List<string>(categoryIds.ToString().Split(','))
-                    .Select(x => new CategoryType{CategoryId = long.Parse(x), TypeId = id});
+            var categoryList = new List<string>(categoryIds.ToString().Split(','))
+                .Select(x => new CategoryType {CategoryId = long.Parse(x), TypeId = id});
 
-                _context.CategoryType.AddRange(categoryList);
-            }
+            _context.CategoryType.AddRange(categoryList);
         }
 
 
-        private Type CreateTypeFromRequestBody(IFormCollection requestForm, long id)
+        private static Type CreateTypeFromRequestBody(IFormCollection requestForm, long id)
         {
-            Type editType = new Type();
-            editType.Id = id;
+            var editType = new Type {Id = id};
 
-            StringValues name;
-            if (requestForm.TryGetValue("Type.Name", out name))
-                editType.Name = name;
-            StringValues info;
-            if (requestForm.TryGetValue("Type.Info", out info))
-                editType.Info = info;
-            StringValues location;
-            if (requestForm.TryGetValue("Type.Location", out location))
-                editType.Location = location;
-            StringValues status;
-            if (requestForm.TryGetValue("Type.Status", out status))
-                if (Enum.TryParse(status, out ComponentTypeStatus statusEnum))
-                    editType.Status = statusEnum;
-            StringValues dataSheet;
-            if (requestForm.TryGetValue("Type.Datasheet", out dataSheet))
-                editType.Datasheet = dataSheet;
-            StringValues imageUrl;
-            if (requestForm.TryGetValue("Type.ImageUrl", out imageUrl))
-                editType.ImageUrl = imageUrl;
-            StringValues manufacturer;
-            if (requestForm.TryGetValue("Type.Manufacturer", out manufacturer))
-                editType.Manufacturer = manufacturer;
-            StringValues wikiLink;
-            if (requestForm.TryGetValue("Type.WikiLink", out wikiLink))
-                editType.WikiLink = wikiLink;
-            StringValues adminComment;
-            if (requestForm.TryGetValue("Type.AdminComment", out adminComment))
-                editType.AdminComment = adminComment;
+            if (requestForm.TryGetValue("Type.Name", out var name))editType.Name = name;
+            if (requestForm.TryGetValue("Type.Info", out var info))editType.Info = info;
+            if (requestForm.TryGetValue("Type.Location", out var location))editType.Location = location;
+            if (requestForm.TryGetValue("Type.Datasheet", out var dataSheet))editType.Datasheet = dataSheet;
+            if (requestForm.TryGetValue("Type.ImageUrl", out var imageUrl))editType.ImageUrl = imageUrl;
+            if (requestForm.TryGetValue("Type.Manufacturer", out var manufacturer))editType.Manufacturer = manufacturer;
+            if (requestForm.TryGetValue("Type.WikiLink", out var wikiLink))editType.WikiLink = wikiLink;
+            if (requestForm.TryGetValue("Type.AdminComment", out var adminComment))editType.AdminComment = adminComment;
+            if (requestForm.TryGetValue("Type.Status", out var status))
+            {
+                if (Enum.TryParse(status, out ComponentTypeStatus statusEnum))editType.Status = statusEnum;
+            }
 
             return editType;
         }
 
         public async Task<IActionResult> Delete(long? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var type = await _context.Types
-                .SingleOrDefaultAsync(m => m.Id == id);
-            if (type == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null)return NotFound();
+            var type = await _context.Types.SingleOrDefaultAsync(m => m.Id == id);
+            if (type == null)return NotFound();
             return View(type);
         }
 
