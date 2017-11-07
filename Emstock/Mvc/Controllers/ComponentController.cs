@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -90,7 +89,7 @@ namespace Mvc.Controllers
             {
                 return NotFound();
             }
-            
+
             return View(model);
         }
 
@@ -150,11 +149,11 @@ namespace Mvc.Controllers
             StringValues currentLoanInformationId;
             if (requestForm.TryGetValue("Component.CurrentLoanInformationId", out currentLoanInformationId))
                 editComponent.CurrentLoanInformationId = StringValues.IsNullOrEmpty(currentLoanInformationId) ? (long?)null : long.Parse(currentLoanInformationId);
-            
+
             StringValues TypeId;
             if (requestForm.TryGetValue("TypeId", out TypeId))
                 editComponent.TypeId = int.Parse(TypeId);
-            
+
             return editComponent;
         }
 
