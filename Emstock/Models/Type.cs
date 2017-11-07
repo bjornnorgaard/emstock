@@ -20,6 +20,7 @@ namespace Models
         [DisplayName("Admin Comment")]
         public string AdminComment { get; set; }
 
+        [DisplayName("Categories of this type")]
         public List<CategoryType> CategoryTypes { get; set; }
         public List<Component> Components { get; set; }
     }

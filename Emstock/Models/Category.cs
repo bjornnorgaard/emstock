@@ -8,7 +8,7 @@ namespace Models
         public long Id { get; set; }
         public string Name { get; set; }
 
-        [DisplayName("Types")]
+        [DisplayName("Types of this category")]
         public List<CategoryType> CategoryTypes { get; set; }
     }
 }
